@@ -34,10 +34,13 @@ def send_message(chat_id, text):
         timeout=20
     )
 
-
-@app.route("/", methods=["GET"])
-def home():
-    return "Bot is running!"
+@app.route('/', methods=['GET', 'POST'])
+def webhook():
+    if request.method == 'POST':
+        update = telebot.types.Update.de_json(request.stream.read().decode('utf-8'))
+        bot.process_new_updates([update])
+        return 'ok', 200
+    return 'Bot is running!', 200
 
 
 @app.route("/webhook", methods=["POST"])
